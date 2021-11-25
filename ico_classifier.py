@@ -12,13 +12,16 @@ class ADNN(nn.Module):
     def __init__(self, input_size, hidden_size, criterion,
                  optimizer, num_classes=2):
         super(ADNN, self).__init__()
+        
         self.l1 = nn.Linear(input_size, hidden_size)
-        self.relu = nn.ReLU()
         self.l2 = nn.Linear(hidden_size, hidden_size)
         self.l3 = nn.Linear(hidden_size, num_classes)
+        self.relu = nn.ReLU()
 
         self.criterion = criterion
         self.optimizer = optimizer
+        
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     def forward(self, x):
         out = self.l1(x)
@@ -29,9 +32,14 @@ class ADNN(nn.Module):
         return out
 
     def fit(self, dataset, target, num_epochs, lr):
-        dataset = tf.normalize(torch.tensor(dataset, dtype=torch.float32))
-        # dataset = torch.tensor(dataset, dtype=torch.float32)
+        dataset = torch.tensor(dataset, dtype=torch.float32)
+        dataset = tf.normalize(dataset) # Normalize data
+        
         target = torch.tensor(target, dtype=torch.int64)
+        
+        dataset = dataset.to(self.device)
+        target = target.to(self.device)
+        
         criterion = self.criterion()
         optimizer = self.optimizer(self.parameters(), lr=lr)
 
@@ -44,13 +52,15 @@ class ADNN(nn.Module):
             loss.backward()
             optimizer.step()
 
-            # print(f'Epoch [{epoch + 1}/{num_epochs}], '
-            #       f'Loss: {loss.item():.4f}')
-
+            print(f'\rEpoch [{epoch + 1}/{num_epochs}], '
+                  f'Loss: {loss.item():.4f}', end='')
+        print()
 
 class ElementClassifier:
     def __init__(self, model, h, M):
-        self.ADNN = model
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        
+        self.ADNN = model.to(self.device)
         self.h = h
         self.M = M
 
@@ -63,12 +73,13 @@ class ElementClassifier:
             log_probabilities = np.full(shape=(data.shape[0], 2 * self.M + 2),
                                         fill_value=log_const_proba)
             for i, m in enumerate(range(self.M, -self.M - 1, -1)):
-                outputs = self.ADNN(tf.normalize(torch.tensor(data + 2 * m * self.h, dtype=torch.float32)))
-                # outputs = self.ADNN(torch.tensor(data + 2 * m * self.h, dtype=torch.float32))
+                dataset = torch.tensor(data + 2 * m * self.h, dtype=torch.float32)
+                dataset = tf.normalize(dataset)
+                dataset = dataset.to(self.device)
+                outputs = self.ADNN(dataset)
                 outputs = tf.log_softmax(outputs, dim=1)
                 outputs = outputs[:, 1] - outputs[:, 0]
-                outputs = outputs.numpy()
-                log_probabilities[:, i+1:] += outputs[:, np.newaxis]
+                log_probabilities[:, i+1:] += outputs.reshape(-1, 1).cpu().numpy()
             return np.arange(-2 * self.M - 1, 2 * self.M + 2, 2)[log_probabilities.argmax(axis=1)]
 
 
@@ -100,8 +111,8 @@ class ICOClassifier:
     def fit(self, data, target, num_epochs=10, lr=0.001):
         datasets, targets = self.data_transformer(data, target)
         for i, (classifier, dataset, target) in enumerate(zip(self.ElementClassifiers, datasets, targets)):
+            print(f'ADNN {1+i}/{self.dim}:')
             classifier.fit(dataset, target, num_epochs=num_epochs, lr=lr)
-            print(f'ADNN {1+i}/{self.dim} trained')
 
     def predict(self, data):
         return np.column_stack([model.predict(data) for model in self.ElementClassifiers])
