@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as tf
 from data_generators import ADNNDataTransformer
+from torch.utils.tensorboard import SummaryWriter
 # from torch.utils.data import dataset
 # import torchvision
 # import torchvision.transforms as transforms
@@ -10,7 +11,7 @@ from data_generators import ADNNDataTransformer
 
 class ADNN(nn.Module):
     def __init__(self, input_size, hidden_size, criterion,
-                 optimizer, num_classes=2):
+                 optimizer, num_classes=2, writer=None):
         super(ADNN, self).__init__()
         
         self.l1 = nn.Linear(input_size, hidden_size)
@@ -22,6 +23,8 @@ class ADNN(nn.Module):
         self.optimizer = optimizer
         
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        
+        self.writer = writer
 
     def forward(self, x):
         out = self.l1(x)
@@ -54,6 +57,10 @@ class ADNN(nn.Module):
 
             print(f'\rEpoch [{epoch + 1}/{num_epochs}], '
                   f'Loss: {loss.item():.4f}', end='')
+
+            if self.writer is not None:
+                self.writer.add_scalar('training_loss', loss, epoch + 1)
+            
         print()
 
 class ElementClassifier:
@@ -100,12 +107,15 @@ class ICOClassifier:
             self.optimizer = torch.optim.Adam
         else:
             raise ValueError(f"Optimizer '{optimizer}' not implemented")
-
-        self.ElementClassifiers = [ElementClassifier(ADNN(input_size=self.dim,
-                                                          hidden_size=hidden_size,
-                                                          criterion=self.criterion,
-                                                          optimizer=self.optimizer),
-                                                     H[:, i], M) for i in range(self.dim)]
+        
+        self.ElementClassifiers = []
+        for i in range(self.dim):
+            adnn = ADNN(input_size=self.dim, hidden_size=hidden_size,
+                        criterion=self.criterion,
+                        optimizer=self.optimizer,
+                        writer=SummaryWriter(comment=f'ADNN {i+1}/{self.dim}'))
+            self.ElementClassifiers.append(ElementClassifier(adnn, H[:, i], M))
+        
         self.data_transformer = ADNNDataTransformer(H).transform
 
     def fit(self, data, target, num_epochs=10, lr=0.001):
