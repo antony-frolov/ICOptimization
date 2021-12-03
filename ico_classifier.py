@@ -67,11 +67,10 @@ class ADNN(nn.Module):
             print()
 
 class ElementClassifier:
-    def __init__(self, model, h, M):
+    def __init__(self, model, idx, M):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        
+        self.idx = idx
         self.ADNN = model.to(self.device)
-        self.h = h
         self.M = M
 
     def fit(self, *args, **kwargs):
@@ -80,10 +79,12 @@ class ElementClassifier:
     def predict(self, data):
         with torch.no_grad():
             log_const_proba = 0.
-            log_probabilities = np.full(shape=(data.shape[0], 2 * self.M + 2),
+            log_probabilities = np.full(shape=(data['y'].shape[0], 2 * self.M + 2),
                                         fill_value=log_const_proba)
             for i, m in enumerate(range(self.M, -self.M - 1, -1)):
-                dataset = torch.tensor(data + 2 * m * self.h, dtype=torch.float32)
+                y = data['y']
+                h_i = data['H'][..., self.idx]
+                dataset = torch.tensor(y + 2 * m * h_i, dtype=torch.float32)
                 dataset = tf.normalize(dataset)
                 dataset = dataset.to(self.device)
                 outputs = self.ADNN(dataset)
@@ -94,9 +95,8 @@ class ElementClassifier:
 
 
 class ICOClassifier:
-    def __init__(self, H, M, hidden_size=500, criterion='cross-entropy', optimizer='sgd', logging_level='verbose'):
-        self.H = H
-        self.dim = H.shape[0]
+    def __init__(self, dim, M, hidden_size=500, criterion='cross-entropy', optimizer='sgd', logging_level='verbose'):
+        self.dim = dim
         self.M = M
         self.logging_level = logging_level
 
@@ -119,9 +119,9 @@ class ICOClassifier:
                         optimizer=self.optimizer,
                         writer=SummaryWriter(comment=f'ADNN {i+1}/{self.dim}'),
                         logging_level=logging_level)
-            self.ElementClassifiers.append(ElementClassifier(adnn, H[:, i], M))
+            self.ElementClassifiers.append(ElementClassifier(adnn, i, M))
         
-        self.data_transformer = ADNNDataTransformer(H).transform
+        self.data_transformer = ADNNDataTransformer().transform
 
     def fit(self, data, target, num_epochs=10, lr=0.001):
         datasets, targets = self.data_transformer(data, target)
