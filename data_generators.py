@@ -40,8 +40,11 @@ class DataGenerator:
             data = {'H': np.array([self.H_gen() for _ in range(len(target))])}
             data['y'] = np.row_stack([H @ x - self.res_gen() for H, x in zip(data['H'], target)])
         else:
-            data = {'H': self.H}
-            data['y'] = np.row_stack([self.H @ x - self.res_gen() for x in target])
+            data = {
+                'H': self.H,
+                'y': np.row_stack([self.H @ x - self.res_gen() for x in target]),
+            }
+
         return data, target
 
 
