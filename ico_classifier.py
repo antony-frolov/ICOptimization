@@ -11,7 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 
 class ADNN(nn.Module):
     def __init__(self, input_size, hidden_size, criterion,
-                 optimizer, num_classes=2, writer=None):
+                 optimizer, num_classes=2, writer=None, logging_level='verbose'):
         super(ADNN, self).__init__()
         
         self.l1 = nn.Linear(input_size, hidden_size)
@@ -25,6 +25,8 @@ class ADNN(nn.Module):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         
         self.writer = writer
+        
+        self.logging_level = logging_level
 
     def forward(self, x):
         out = self.l1(x)
@@ -54,14 +56,15 @@ class ADNN(nn.Module):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
-
-            print(f'\rEpoch [{epoch + 1}/{num_epochs}], '
-                  f'Loss: {loss.item():.4f}', end='')
+            if self.logging_level == 'verbose':
+                print(f'\rEpoch [{epoch + 1}/{num_epochs}], '
+                      f'Loss: {loss.item():.4f}', end='')
 
             if self.writer is not None:
                 self.writer.add_scalar('training_loss', loss, epoch + 1)
-            
-        print()
+        
+        if self.logging_level == 'verbose':
+            print()
 
 class ElementClassifier:
     def __init__(self, model, h, M):
@@ -91,10 +94,11 @@ class ElementClassifier:
 
 
 class ICOClassifier:
-    def __init__(self, H, M, hidden_size=500, criterion='cross-entropy', optimizer='sgd'):
+    def __init__(self, H, M, hidden_size=500, criterion='cross-entropy', optimizer='sgd', logging_level='verbose'):
         self.H = H
         self.dim = H.shape[0]
         self.M = M
+        self.logging_level = logging_level
 
         if criterion == 'cross-entropy':
             self.criterion = nn.CrossEntropyLoss
@@ -113,7 +117,8 @@ class ICOClassifier:
             adnn = ADNN(input_size=self.dim, hidden_size=hidden_size,
                         criterion=self.criterion,
                         optimizer=self.optimizer,
-                        writer=SummaryWriter(comment=f'ADNN {i+1}/{self.dim}'))
+                        writer=SummaryWriter(comment=f'ADNN {i+1}/{self.dim}'),
+                        logging_level=logging_level)
             self.ElementClassifiers.append(ElementClassifier(adnn, H[:, i], M))
         
         self.data_transformer = ADNNDataTransformer(H).transform
@@ -121,7 +126,8 @@ class ICOClassifier:
     def fit(self, data, target, num_epochs=10, lr=0.001):
         datasets, targets = self.data_transformer(data, target)
         for i, (classifier, dataset, target) in enumerate(zip(self.ElementClassifiers, datasets, targets)):
-            print(f'ADNN {1+i}/{self.dim}:')
+            if self.logging_level == 'verbose':
+                print(f'ADNN {1+i}/{self.dim}:')
             classifier.fit(dataset, target, num_epochs=num_epochs, lr=lr)
 
     def predict(self, data):
