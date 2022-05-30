@@ -1,63 +1,61 @@
-@misc{https://doi.org/10.48550/arxiv.1506.03134,
-  doi       = {10.48550/ARXIV.1506.03134},
-  url       = {https://arxiv.org/abs/1506.03134},
-  author    = {Vinyals, Oriol and Fortunato, Meire and Jaitly, Navdeep},
-  keywords  = {Machine Learning (stat.ML), Computational Geometry (cs.CG), Machine Learning (cs.LG), Neural and Evolutionary Computing (cs.NE), FOS: Computer and information sciences, FOS: Computer and information sciences},
-  title     = {Pointer Networks},
-  publisher = {arXiv},
-  year      = {2015},
-  copyright = {arXiv.org perpetual, non-exclusive license}
-}
-
-@misc{https://doi.org/10.48550/arxiv.2011.05399,
-  doi       = {10.48550/ARXIV.2011.05399},
-  url       = {https://arxiv.org/abs/2011.05399},
-  author    = {Zhou, Zhou and Jere, Shashank and Zheng, Lizhong and Liu, Lingjia},
-  keywords  = {Machine Learning (cs.LG), Optimization and Control (math.OC), FOS: Computer and information sciences, FOS: Computer and information sciences, FOS: Mathematics, FOS: Mathematics},
-  title     = {Learning for Integer-Constrained Optimization through Neural Networks with Limited Training},
-  publisher = {arXiv},
-  year      = {2020},
-  copyright = {arXiv.org perpetual, non-exclusive license}
-}
-
-@misc{https://doi.org/10.48550/arxiv.2012.13349,
-  doi       = {10.48550/ARXIV.2012.13349},
-  url       = {https://arxiv.org/abs/2012.13349},
-  author    = {Nair, Vinod and Bartunov, Sergey and Gimeno, Felix and von Glehn, Ingrid and Lichocki, Pawel and Lobov, Ivan and O'Donoghue, Brendan and Sonnerat, Nicolas and Tjandraatmadja, Christian and Wang, Pengming and Addanki, Ravichandra and Hapuarachchi, Tharindi and Keck, Thomas and Keeling, James and Kohli, Pushmeet and Ktena, Ira and Li, Yujia and Vinyals, Oriol and Zwols, Yori},
-  keywords  = {Optimization and Control (math.OC), Artificial Intelligence (cs.AI), Discrete Mathematics (cs.DM), Machine Learning (cs.LG), Neural and Evolutionary Computing (cs.NE), FOS: Mathematics, FOS: Mathematics, FOS: Computer and information sciences, FOS: Computer and information sciences},
-  title     = {Solving Mixed Integer Programs Using Neural Networks},
-  publisher = {arXiv},
-  year      = {2020},
-  copyright = {arXiv.org perpetual, non-exclusive license}
-}
-
 @inproceedings{10.5555/3015812.3015920,
-author = {Khalil, Elias B. and Bodic, Pierre Le and Song, Le and Nemhauser, George and Dilkina, Bistra},
-title = {Learning to Branch in Mixed Integer Programming},
-year = {2016},
-publisher = {AAAI Press},
-abstract = {The design of strategies for branching in Mixed Integer Programming (MIP) is guided by cycles of parameter tuning and offline experimentation on an extremely heterogeneous testbed, using the average performance. Once devised, these strategies (and their parameter settings) are essentially input-agnostic. To address these issues, we propose a machine learning (ML) framework for variable branching in MIP. Our method observes the decisions made by Strong Branching (SB), a time-consuming strategy that produces small search trees, collecting features that characterize the candidate branching variables at each node of the tree. Based on the collected data, we learn an easy-to-evaluate surrogate function that mimics the SB strategy, by means of solving a learning-to-rank problem, common in ML. The learned ranking function is then used for branching. The learning is instance-specific, and is performed on-the-fly while executing a branch-and-bound search to solve the instance. Experiments on benchmark instances indicate that our method produces significantly smaller search trees than existing heuristics, and is competitive with a state-of-the-art commercial solver.},
-booktitle = {Proceedings of the Thirtieth AAAI Conference on Artificial Intelligence},
-pages = {724–731},
-numpages = {8},
-location = {Phoenix, Arizona},
-series = {AAAI'16}
+  author    = {Khalil, Elias B. and Bodic, Pierre Le and Song, Le and Nemhauser, George and Dilkina, Bistra},
+  title     = {Learning to Branch in Mixed Integer Programming},
+  year      = {2016},
+  publisher = {AAAI Press},
+  abstract  = {The design of strategies for branching in Mixed Integer Programming (MIP) is guided by cycles of parameter tuning and offline experimentation on an extremely heterogeneous testbed, using the average performance. Once devised, these strategies (and their parameter settings) are essentially input-agnostic. To address these issues, we propose a machine learning (ML) framework for variable branching in MIP. Our method observes the decisions made by Strong Branching (SB), a time-consuming strategy that produces small search trees, collecting features that characterize the candidate branching variables at each node of the tree. Based on the collected data, we learn an easy-to-evaluate surrogate function that mimics the SB strategy, by means of solving a learning-to-rank problem, common in ML. The learned ranking function is then used for branching. The learning is instance-specific, and is performed on-the-fly while executing a branch-and-bound search to solve the instance. Experiments on benchmark instances indicate that our method produces significantly smaller search trees than existing heuristics, and is competitive with a state-of-the-art commercial solver.},
+  booktitle = {Proceedings of the Thirtieth AAAI Conference on Artificial Intelligence},
+  pages     = {724–731},
+  numpages  = {8},
+  location  = {Phoenix, Arizona},
+  series    = {AAAI'16}
 }
 
-@misc{https://doi.org/10.48550/arxiv.1811.06128,
-  doi = {10.48550/ARXIV.1811.06128},
-  
-  url = {https://arxiv.org/abs/1811.06128},
-  
-  author = {Bengio, Yoshua and Lodi, Andrea and Prouvost, Antoine},
-  
-  keywords = {Machine Learning (cs.LG), Machine Learning (stat.ML), FOS: Computer and information sciences, FOS: Computer and information sciences},
-  
-  title = {Machine Learning for Combinatorial Optimization: a Methodological Tour d'Horizon},
-  
-  publisher = {arXiv},
-  
-  year = {2018},
-  
-  copyright = {Creative Commons Attribution Non Commercial Share Alike 4.0 International}
+
+@article{BENGIO2021405,
+  abstract   = {This paper surveys the recent attempts, both from the machine learning and operations research communities, at leveraging machine learning to solve combinatorial optimization problems. Given the hard nature of these problems, state-of-the-art algorithms rely on handcrafted heuristics for making decisions that are otherwise too expensive to compute or mathematically not well defined. Thus, machine learning looks like a natural candidate to make such decisions in a more principled and optimized way. We advocate for pushing further the integration of machine learning and combinatorial optimization and detail a methodology to do so. A main point of the paper is seeing generic optimization problems as data points and inquiring what is the relevant distribution of problems to use for learning on a given task.},
+  author     = {Yoshua Bengio and Andrea Lodi and Antoine Prouvost},
+  doi        = {https://doi.org/10.1016/j.ejor.2020.07.063},
+  issn       = {0377-2217},
+  journal    = {European Journal of Operational Research},
+  keywords   = {Combinatorial optimization, Machine learning, Branch and bound, Mixed-integer programming solvers},
+  number     = {2},
+  pages      = {405-421},
+  title      = {Machine learning for combinatorial optimization: A methodological tour d'horizon},
+  url        = {https://www.sciencedirect.com/science/article/pii/S0377221720306895},
+  volume     = {290},
+  year       = {2021},
+  bdsk-url-1 = {https://www.sciencedirect.com/science/article/pii/S0377221720306895},
+  bdsk-url-2 = {https://doi.org/10.1016/j.ejor.2020.07.063}
+}
+
+
+
+@article{Nair2020SolvingMI,
+  title   = {Solving Mixed Integer Programs Using Neural Networks},
+  author  = {Vinod Nair and Sergey Bartunov and Felix Gimeno and Ingrid von Glehn and Pawel Lichocki and Ivan Lobov and Brendan O'Donoghue and Nicolas Sonnerat and Christian Tjandraatmadja and Pengming Wang and Ravichandra Addanki and Tharindi Hapuarachchi and Thomas Keck and James Keeling and Pushmeet Kohli and Ira Ktena and Yujia Li and Oriol Vinyals and Yori Zwols},
+  journal = {ArXiv},
+  year    = {2020},
+  volume  = {abs/2012.13349}
+}
+
+
+@inproceedings{NIPS2015_29921001,
+  author     = {Vinyals, Oriol and Fortunato, Meire and Jaitly, Navdeep},
+  booktitle  = {Advances in Neural Information Processing Systems},
+  editor     = {C. Cortes and N. Lawrence and D. Lee and M. Sugiyama and R. Garnett},
+  publisher  = {Curran Associates, Inc.},
+  title      = {Pointer Networks},
+  url        = {https://proceedings.neurips.cc/paper/2015/file/29921001f2f04bd3baee84a12e98098f-Paper.pdf},
+  volume     = {28},
+  year       = {2015},
+  bdsk-url-1 = {https://proceedings.neurips.cc/paper/2015/file/29921001f2f04bd3baee84a12e98098f-Paper.pdf}
+}
+
+@inproceedings{zhou2020learning,
+  title     = {Learning for Integer-Constrained Optimization through Neural Networks with Limited Training},
+  author    = {Zhou Zhou and Shashank Jere and Lizhong Zheng and Lingjia Liu},
+  booktitle = {Learning Meets Combinatorial Algorithms at NeurIPS2020},
+  year      = {2020},
+  url       = {https://openreview.net/forum?id=aoOPfbArWiB}
 }
